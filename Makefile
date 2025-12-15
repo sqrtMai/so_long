@@ -1,10 +1,10 @@
 NAME = so_long
-CC = cc
+CC = cc -std=c11
 CFLAGS = -I./libft -I./ -Imlx_linux
 AR = ar rcs
 RM = rm -f
 
-SRC = so_long.c hook.c so_long_utils.c init_struct.c init_window.c
+SRC = so_long.c hook.c so_long_utils.c initialize.c check_map.c error_handling.c
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)

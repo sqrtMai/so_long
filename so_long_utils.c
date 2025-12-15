@@ -16,7 +16,7 @@ static int get_map_size(int fd)
 	return (close(fd), len);
 }
 
-char *read_map(char *map)
+char *read_map(char *map, t_fdf *fdf)
 {
 	char *full_map;
 	char *gnl;
@@ -27,11 +27,11 @@ char *read_map(char *map)
 	len = 0;
 	fd = open(map, O_RDONLY);
 	size = get_map_size(fd);
-	if (fd < 0 || size < 0)
-		return (ft_printf("Incorrect map là"), exit(1), NULL);
+	if (fd < 0 || size <= 0)
+		return (ft_printf("Map incorrect"), free_hub(fdf, 1), NULL);
 	full_map = malloc(size + 1);
 	if (!full_map)
-		return NULL;
+		return (close(fd), free_hub(fdf, 1), NULL);
 	fd = open(map, O_RDONLY);
 	gnl = get_next_line(fd, 1);
 	while (gnl)
@@ -41,8 +41,7 @@ char *read_map(char *map)
 		free(gnl);
 		gnl = get_next_line(fd, 0);
 	}
-	close(fd);
-	return (full_map[len] = 0, full_map);
+	return (close(fd), full_map[len] = 0, full_map);
 }
 
 int get_map_len(char *map)
@@ -69,30 +68,4 @@ int get_map_height(char *map)
 		i++;
 	}
 	return height + 1;
-}
-
-int check_valid_size(t_fdf *fdf, char *map)
-{
-	int i;
-	int line_size;
-	int next_line_size;
-
-	i = 0;
-	line_size = get_map_len(map);
-	while (map[i])
-	{
-		if (map[i] == '\n' && map[i + 1])
-		{
-			next_line_size = get_map_len(&map[i + 1]);
-			if (line_size != next_line_size)
-			{
-				free(fdf->map->map);
-				free(fdf->map);
-				ft_printf("wrong\n");
-				exit(1);
-			}
-		}
-		i++;
-	}
-	return 1;
 }
