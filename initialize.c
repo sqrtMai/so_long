@@ -36,7 +36,6 @@ void print_map(t_fdf *fdf)
 	int z;
 	int l;
 
-	y = 0;
 	i = 0;
 	l = 0;
 	while (i < fdf->map->map_height)
@@ -46,6 +45,8 @@ void print_map(t_fdf *fdf)
 		while (y < fdf->map->map_len)
 		{
 			print_case(fdf, fdf->map->points[i][y].type, z, l);
+			fdf->map->points[i][y].z = z;
+			fdf->map->points[i][y].l = l;
 			z += 75;
 			y++;
 		}
@@ -68,16 +69,42 @@ void init_sprites(t_fdf *fdf)
 												  &fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
 }
 
+t_point *find_player(t_fdf *fdf)
+{
+	int i;
+	int y;
+
+	i = 0;
+	while (i < fdf->map->map_height)
+	{
+		y = 0;
+		while (y < fdf->map->map_len)
+		{
+			if (fdf->map->points[i][y].type == 'P')
+				return &fdf->map->points[i][y];
+			y++;
+		}
+		i++;
+	}
+}
+
+int draw_player(t_fdf *fdf)
+{
+	return mlx_put_image_to_window(fdf->mlx, fdf->window, fdf->sprites->sprite3, find_player(fdf)->z,  find_player(fdf)->l);
+}
+
 static void init_window(t_fdf *fdf)
 {
 	fdf->mlx = mlx_init();
 	fdf->window = mlx_new_window(fdf->mlx, fdf->map->map_len * 75, fdf->map->map_height * 75, "so_long");
 	fdf->img.width = 75;
 	fdf->img.height = 75;
-	mlx_hook(fdf->window, 2, 1L << 0, key_hook, fdf);
+	mlx_hook(fdf->window, 3, 1L << 1, key_hook, fdf);
 	mlx_hook(fdf->window, 17, 0, close_window, fdf);
 	init_sprites(fdf);
 	print_map(fdf);
+	if (fdf->img.img && fdf->mlx)
+		mlx_loop_hook(fdf->mlx, draw_player, fdf);
 	mlx_loop(fdf->mlx);
 }
 static t_point **malloc_map(t_fdf *fdf)
@@ -113,18 +140,21 @@ static void put_datas_to_point(t_fdf *fdf)
 	while (split[i])
 	{
 		y = 0;
+		ft_printf("\n");
 		while (split[i][y] && split[i])
 		{
 			fdf->map->points[i][y].type = split[i][y];
 			if (split[i][y] == 'C')
 				fdf->map->collectibles++;
 			fdf->map->points[i][y].x = y;
-			fdf->map->points[i][y++].y = i;
+			fdf->map->points[i][y].y = i;
+			ft_printf("%c", fdf->map->points[i][y].type);
+			y++;
 		}
 		i++;
 	}
 	free_everything((void **)split);
-	check_walls(fdf);
+	//check_walls(fdf);
 }
 
 static void init_struct(t_fdf *fdf, char *map)
@@ -134,7 +164,6 @@ static void init_struct(t_fdf *fdf, char *map)
 		exit(1);
 	fdf->map->points = NULL;
 	fdf->map->collectibles = 0;
-	;
 	fdf->map->flood_fill = 0;
 	fdf->map->map = read_map(map, fdf);
 	check_valid_size(fdf, fdf->map->map);
@@ -152,6 +181,7 @@ static void init_struct(t_fdf *fdf, char *map)
 	fdf->map->size.y = fdf->map->map_height;
 	fdf->sprites = malloc(sizeof(t_sprite));
 	fdf->sprites->sprites_size = 0;
+	fdf->map->moves = 0;
 }
 
 void init_datas(t_fdf *fdf, char *map)

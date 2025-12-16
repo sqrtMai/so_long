@@ -11,3 +11,9 @@ int main(int argc, char **argv)
 	init_datas(&fdf, argv[1]);
 	return 0;
 }
+
+/*TODO régler le pb de uninitialised value
+régler le problème de mon check map
+quand une map est pas valide ça call destroy things
+sur des valeur non initiée*/
+

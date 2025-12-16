@@ -10,6 +10,8 @@ typedef struct s_point
 {
     int x;
     int y;
+    int z;
+    int l;
     char type;
 }   t_point;
 
@@ -22,7 +24,9 @@ typedef struct s_map
     char *map;
     char **split_copy;
     int collectibles;
+    int collectibles_taken;
     int flood_fill;
+    int moves;
 }	t_map;
 
 typedef struct s_sprite
@@ -74,6 +78,8 @@ int check_walls(t_fdf *fdf);
 //Initialize
 void init_datas(t_fdf *fdf, char *map);
 
+
+t_point *find_player(t_fdf *fdf);
 //Error Handling
 void free_things(t_fdf *fdf, int value);
 
