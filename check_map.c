@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mai <mai@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: bbouarab <bbouarab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 11:30:33 by bbouarab          #+#    #+#             */
-/*   Updated: 2025/12/15 19:46:24 by mai              ###   ########.fr       */
+/*   Updated: 2025/12/16 13:59:21 by bbouarab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,48 @@ int check_valid_map(char *map)
 		return 0;
 	return (exit + start + collectible);
 }
+t_point find_begin(t_fdf *fdf)
+{
+	int i;
+	int y;
+
+	i = 0;
+	while (i < fdf->map->map_height)
+	{
+		y = 0;
+		while (y < fdf->map->map_len)
+		{
+			if (fdf->map->points[i][y].type == 'P')
+				return fdf->map->points[i][y];
+			y++;
+		}
+		i++;
+	}
+	return fdf->map->points[i][y];
+}
+
+
+void flood_fill(char **tab, t_point size, t_point begin, t_fdf *fdf)
+{
+	if (tab[begin.y][begin.x] == 'E' || tab[begin.y][begin.x] == 'C')
+		fdf->map->flood_fill++;
+	tab[begin.y][begin.x] = 'F';
+	begin.y++;
+	if (begin.y < size.y && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+		flood_fill(tab, size, begin, fdf);
+	begin.y--;
+	begin.y--;
+	if (begin.y >= 0 && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+		flood_fill(tab, size, begin, fdf);
+	begin.y++;
+	begin.x++;
+	if (begin.x < size.x && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+		flood_fill(tab, size, begin, fdf);
+	begin.x--;
+	begin.x--;
+	if (begin.x >= 0 && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+		flood_fill(tab, size, begin, fdf);
+}
 
 int check_walls(t_fdf *fdf)
 {
@@ -77,15 +119,18 @@ int check_walls(t_fdf *fdf)
 		while (y < fdf->map->map_len)
 		{
 			if (i == 0 && fdf->map->points[i][y].type != '1')
-					return (ft_printf("The map is invalid."), free_hub(fdf, 1), -1);
+				return (ft_printf("The map is invalid."), free_things(fdf, 1), -1);
 			if ((i > 0 && i < fdf->map->map_height - 1) &&
-				fdf->map->points[i][0].type != '1' || fdf->map->points[i][fdf->map->map_len - 1].type != '1')
-					return (ft_printf("The map is invalid."), free_hub(fdf, 1), -1);
+					fdf->map->points[i][0].type != '1' ||
+				fdf->map->points[i][fdf->map->map_len - 1].type != '1')
+				return (ft_printf("The map is invalid."), free_things(fdf, 1), -1);
 			if (i == fdf->map->map_height - 1 && fdf->map->points[i][y].type != '1')
-					return (ft_printf("The map is invalid."), free_hub(fdf, 1), -1);
+				return (ft_printf("The map is invalid."), free_things(fdf, 1), -1);
 			y++;
 		}
 		i++;
 	}
-	return 1;
+	flood_fill(fdf->map->split_copy, fdf->map->size, find_begin(fdf), fdf);
+	if (fdf->map->flood_fill != fdf->map->collectibles + 1)
+		return ((ft_printf("The map isn't solvable."), free_things(fdf, 1), -1), 1);
 }

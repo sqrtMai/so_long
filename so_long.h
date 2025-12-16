@@ -18,8 +18,22 @@ typedef struct s_map
 	t_point **points;
 	int map_len;
 	int map_height;
+    t_point size;
     char *map;
+    char **split_copy;
+    int collectibles;
+    int flood_fill;
 }	t_map;
+
+typedef struct s_sprite
+{
+    void *sprite1;
+    void *sprite2;
+    void *sprite3;
+    void *sprite4;
+    void *sprite5;
+    int    sprites_size;
+} t_sprite;
 
 typedef struct	s_image {
 	void	*img;
@@ -30,6 +44,7 @@ typedef struct	s_image {
     int     width;
     int     height;
 
+
 }				t_image;
 
 typedef struct s_fdf
@@ -38,6 +53,7 @@ typedef struct s_fdf
     void    *window;
     t_map   *map;
     t_image   img;
+    t_sprite *sprites;
 } t_fdf;
 
 //Hook
@@ -48,6 +64,7 @@ int close_window(t_fdf *fdf);
 int get_map_height(char *map);
 int get_map_len(char *map);
 char *read_map(char *map, t_fdf *fdf);
+char **split_every_char(char *map);
 
 //Check Map
 void check_valid_size(t_fdf *fdf, char *map);
@@ -58,6 +75,6 @@ int check_walls(t_fdf *fdf);
 void init_datas(t_fdf *fdf, char *map);
 
 //Error Handling
-void free_hub(t_fdf *fdf, int value);
+void free_things(t_fdf *fdf, int value);
 
 #endif

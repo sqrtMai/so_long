@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   error_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mai <mai@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: bbouarab <bbouarab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 11:30:33 by bbouarab          #+#    #+#             */
-/*   Updated: 2025/12/15 20:00:29 by mai              ###   ########.fr       */
+/*   Updated: 2025/12/16 09:18:35 by bbouarab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void free_hub(t_fdf *fdf, int value)
+void free_things(t_fdf *fdf, int value)
 {
 	int i;
 

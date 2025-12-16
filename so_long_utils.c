@@ -28,10 +28,10 @@ char *read_map(char *map, t_fdf *fdf)
 	fd = open(map, O_RDONLY);
 	size = get_map_size(fd);
 	if (fd < 0 || size <= 0)
-		return (ft_printf("Map incorrect"), free_hub(fdf, 1), NULL);
+		return (ft_printf("Map incorrect"), free_things(fdf, 1), NULL);
 	full_map = malloc(size + 1);
 	if (!full_map)
-		return (close(fd), free_hub(fdf, 1), NULL);
+		return (close(fd), free_things(fdf, 1), NULL);
 	fd = open(map, O_RDONLY);
 	gnl = get_next_line(fd, 1);
 	while (gnl)
@@ -68,4 +68,28 @@ int get_map_height(char *map)
 		i++;
 	}
 	return height + 1;
+}
+
+char **split_every_char(char *map)
+{
+	int len;
+	char **split;
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	len = ft_strlen(map) - get_map_height(map);
+	split = malloc((len + 1) * sizeof(char *));
+	while (split[i] && map[j])
+	{
+		if (map[j] == '\n')
+			j++;
+		split[i] = malloc(1 + 1);
+		split[i][1] = 0;
+		split[i][0] = map[j];
+		i++;
+		j++;
+	}
+	return (split[len] = 0, split);
 }
