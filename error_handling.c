@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mai <mai@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: bbouarab <bbouarab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 11:30:33 by bbouarab          #+#    #+#             */
-/*   Updated: 2025/12/16 22:20:54 by mai              ###   ########.fr       */
+/*   Updated: 2025/12/17 13:42:54 by bbouarab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,23 @@
 
 void destroy_things(t_fdf *fdf)
 {
-	mlx_destroy_image(fdf->mlx, fdf->sprites->sprite1);
-	mlx_destroy_image(fdf->mlx, fdf->sprites->sprite2);
-	mlx_destroy_image(fdf->mlx, fdf->sprites->sprite3);
-	mlx_destroy_image(fdf->mlx, fdf->sprites->sprite4);
-	mlx_destroy_image(fdf->mlx, fdf->sprites->sprite5);
-	mlx_destroy_window(fdf->mlx, fdf->window);
-	mlx_destroy_display(fdf->mlx);
-	free(fdf->mlx);
+	if (fdf->sprites->sprite1)
+		mlx_destroy_image(fdf->mlx, fdf->sprites->sprite1);
+	if (fdf->sprites->sprite2)
+		mlx_destroy_image(fdf->mlx, fdf->sprites->sprite2);
+	if (fdf->sprites->sprite3)
+		mlx_destroy_image(fdf->mlx, fdf->sprites->sprite3);
+	if (fdf->sprites->sprite4)
+		mlx_destroy_image(fdf->mlx, fdf->sprites->sprite4);
+	if (fdf->sprites->sprite5)
+		mlx_destroy_image(fdf->mlx, fdf->sprites->sprite5);
+	if (fdf->mlx && fdf->window)
+		mlx_destroy_window(fdf->mlx, fdf->window);
+	if (fdf->mlx)
+	{
+		mlx_destroy_display(fdf->mlx);
+		free(fdf->mlx);
+	}
 }
 void free_things(t_fdf *fdf, int value)
 {
@@ -46,6 +55,5 @@ void free_things(t_fdf *fdf, int value)
 			free(fdf->sprites);
 		free(fdf->map);
 	}
-
 	exit(1);
 }

@@ -17,13 +17,14 @@ SRC = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
 	  ft_lstlast.c ft_findstr.c free_char.c free_int.c \
 	  ft_lstnew.c  ft_lstsize.c hexa_conversion.c ft_atoi_base.c \
 	  ft_printf/ft_printf.c ft_printf/srcs/hexa_conversion.c ft_printf/srcs/check_type.c ft_printf/srcs/ft_put_counter.c \
-	  get_next_line/get_next_line.c get_next_line/get_next_line_utils.c
+	  get_next_line/get_next_line.c get_next_line/get_next_line_utils.c \
+	  ft_printf_error/ft_printf_error.c ft_printf_error/srcs/hexa_conversion.c ft_printf_error/srcs/check_type.c ft_printf_error/srcs/ft_put_counter.c
 
 
 
 OBJ = $(SRC:.c=.o)
 
-HEADER = libft.h ft_printf/includes/ft_printf.h get_next_line/get_next_line.h
+HEADER = libft.h ft_printf/includes/ft_printf.h get_next_line/get_next_line.h ft_printf_error/includes/ft_printf_error.h
 
 all: $(NAME)
 
@@ -36,11 +37,13 @@ $(NAME): $(OBJ)
 clean:
 	@$(RM) $(OBJ)
 	make -C ft_printf clean
+	make -C ft_printf_error clean
 	make -C get_next_line clean
 
 fclean: clean
 	@$(RM) $(NAME) $(NAME)
 	make -C ft_printf fclean
+	make -C ft_printf_error clean
 	make -C get_next_line fclean
 
 re: fclean all

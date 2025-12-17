@@ -69,18 +69,28 @@ int get_map_height(char *map);
 int get_map_len(char *map);
 char *read_map(char *map, t_fdf *fdf);
 char **split_every_char(char *map);
+t_point *find_player(t_fdf *fdf);
+void put_datas_to_point(t_fdf *fdf);
 
 //Check Map
 void check_valid_size(t_fdf *fdf, char *map);
 int check_valid_map(char *map);
-int check_walls(t_fdf *fdf);
+void check_walls(t_fdf *fdf);
 
 //Initialize
 void init_datas(t_fdf *fdf, char *map);
 
-
-t_point *find_player(t_fdf *fdf);
 //Error Handling
 void free_things(t_fdf *fdf, int value);
+
+//Update Player Position
+void update_player_right(t_fdf *fdf);
+void update_player_left(t_fdf *fdf);
+void update_player_up(t_fdf *fdf);
+void update_player_down(t_fdf *fdf);
+
+//Draw Textures
+void print_map(t_fdf *fdf);
+int draw_player(t_fdf *fdf);
 
 #endif

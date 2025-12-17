@@ -28,7 +28,7 @@ char *read_map(char *map, t_fdf *fdf)
 	fd = open(map, O_RDONLY);
 	size = get_map_size(fd);
 	if (fd < 0 || size <= 0)
-		return (ft_printf("Map incorrect"), free_things(fdf, 1), NULL);
+		return (ft_printf_error("Error\nMap incorrect"), free_things(fdf, 1), NULL);
 	full_map = malloc(size + 1);
 	if (!full_map)
 		return (close(fd), free_things(fdf, 1), NULL);

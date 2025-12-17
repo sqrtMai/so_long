@@ -1,96 +1,28 @@
 #include "so_long.h"
 
-void print_case(t_fdf *fdf, char c, int z, int l)
+int init_sprites(t_fdf *fdf)
 {
-	if (c == '0')
-	{
-		mlx_put_image_to_window(fdf->mlx, fdf->window, fdf->sprites->sprite1, z, l);
-		z += 75;
-	}
-	else if (c == '1')
-	{
-		mlx_put_image_to_window(fdf->mlx, fdf->window, fdf->sprites->sprite2, z, l);
-		z += 75;
-	}
-	else if (c == 'P')
-	{
-		mlx_put_image_to_window(fdf->mlx, fdf->window, fdf->sprites->sprite3, z, l);
-		z += 75;
-	}
-	else if (c == 'C')
-	{
-		mlx_put_image_to_window(fdf->mlx, fdf->window, fdf->sprites->sprite4, z, l);
-		z += 75;
-	}
-	else if (c == 'E')
-	{
-		mlx_put_image_to_window(fdf->mlx, fdf->window, fdf->sprites->sprite5, z, l);
-		z += 75;
-	}
-}
-
-void print_map(t_fdf *fdf)
-{
-	int y;
-	int i;
-	int z;
-	int l;
-
-	i = 0;
-	l = 0;
-	while (i < fdf->map->map_height)
-	{
-		y = 0;
-		z = 0;
-		while (y < fdf->map->map_len)
-		{
-			print_case(fdf, fdf->map->points[i][y].type, z, l);
-			fdf->map->points[i][y].z = z;
-			fdf->map->points[i][y].l = l;
-			z += 75;
-			y++;
-		}
-		l += 75;
-		i++;
-	}
-}
-
-void init_sprites(t_fdf *fdf)
-{
-	fdf->sprites->sprite1 = mlx_xpm_file_to_image(fdf->mlx, "textures/TILE.xpm",
-												  &fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+	fdf->sprites->sprite1 = mlx_xpm_file_to_image(fdf->mlx,
+	"textures/TILE.xpm", &fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+	if (!fdf->sprites->sprite1)
+		return ft_printf_error("Error\nTILE.xpm not found"), free_things(fdf, -1), 1;
 	fdf->sprites->sprite2 = mlx_xpm_file_to_image(fdf->mlx, "textures/WALL.xpm",
-												  &fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+		&fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+	if (!fdf->sprites->sprite2)
+		return ft_printf_error("Error\nWALL.xpm not found"), free_things(fdf, -1), 1;
 	fdf->sprites->sprite3 = mlx_xpm_file_to_image(fdf->mlx, "textures/BABA.xpm",
-												  &fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+		&fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+	if (!fdf->sprites->sprite3)
+		return ft_printf_error("Error\nBABA.xpm not found"), free_things(fdf, -1), 1;
 	fdf->sprites->sprite4 = mlx_xpm_file_to_image(fdf->mlx, "textures/ORB.xpm",
-												  &fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+		&fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+	if (!fdf->sprites->sprite4)
+		return ft_printf_error("Error\nORB.xpm not found"), free_things(fdf, -1), 1;
 	fdf->sprites->sprite5 = mlx_xpm_file_to_image(fdf->mlx, "textures/FLAG.xpm",
-												  &fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
-}
-
-t_point *find_player(t_fdf *fdf)
-{
-	int i;
-	int y;
-
-	i = 0;
-	while (i < fdf->map->map_height)
-	{
-		y = 0;
-		while (y < fdf->map->map_len)
-		{
-			if (fdf->map->points[i][y].type == 'P')
-				return &fdf->map->points[i][y];
-			y++;
-		}
-		i++;
-	}
-}
-
-int draw_player(t_fdf *fdf)
-{
-	return mlx_put_image_to_window(fdf->mlx, fdf->window, fdf->sprites->sprite3, find_player(fdf)->z,  find_player(fdf)->l);
+		&fdf->sprites->sprites_size, &fdf->sprites->sprites_size);
+	if (!fdf->sprites->sprite5)
+		return ft_printf_error("Error\nFLAG.xpm not found"), free_things(fdf, -1), 1;
+	return 0;
 }
 
 static void init_window(t_fdf *fdf)
@@ -103,66 +35,28 @@ static void init_window(t_fdf *fdf)
 	mlx_hook(fdf->window, 17, 0, close_window, fdf);
 	init_sprites(fdf);
 	print_map(fdf);
-	if (fdf->img.img && fdf->mlx)
-		mlx_loop_hook(fdf->mlx, draw_player, fdf);
+	mlx_loop_hook(fdf->mlx, draw_player, fdf);
 	mlx_loop(fdf->mlx);
 }
-static t_point **malloc_map(t_fdf *fdf)
+
+static void init_to_null(t_fdf *fdf)
 {
-	int i;
-	t_point **points;
-
-	i = 0;
-	points = malloc(sizeof(t_point *) * fdf->map->map_height);
-	if (!points)
-		return NULL; // TODO free tout;
-	while (i < fdf->map->map_height)
-	{
-		points[i] = malloc(sizeof(t_point) * (fdf->map->map_len));
-		if (!points[i])
-			return NULL; // TODO free tout;
-		i++;
-	}
-	return points;
+	fdf->map->points = NULL;
+	fdf->mlx = NULL;
+	fdf->window = NULL;
+	fdf->sprites->sprites_size = 0;
+	fdf->sprites->sprite1 = NULL;
+	fdf->sprites->sprite2 = NULL;
+	fdf->sprites->sprite3 = NULL;
+	fdf->sprites->sprite4 = NULL;
+	fdf->sprites->sprite5 = NULL;
+	fdf->map->moves = 0;
 }
-
-static void put_datas_to_point(t_fdf *fdf)
-{
-	int i;
-	int y;
-	char **split;
-
-	i = 0;
-	split = ft_split(fdf->map->map, "\n");
-	if (!split)
-		return (free_things(fdf, 1));
-	fdf->map->points = malloc_map(fdf);
-	while (split[i])
-	{
-		y = 0;
-		ft_printf("\n");
-		while (split[i][y] && split[i])
-		{
-			fdf->map->points[i][y].type = split[i][y];
-			if (split[i][y] == 'C')
-				fdf->map->collectibles++;
-			fdf->map->points[i][y].x = y;
-			fdf->map->points[i][y].y = i;
-			ft_printf("%c", fdf->map->points[i][y].type);
-			y++;
-		}
-		i++;
-	}
-	free_everything((void **)split);
-	//check_walls(fdf);
-}
-
 static void init_struct(t_fdf *fdf, char *map)
 {
 	fdf->map = malloc(sizeof(t_map));
 	if (!fdf->map)
 		exit(1);
-	fdf->map->points = NULL;
 	fdf->map->collectibles = 0;
 	fdf->map->flood_fill = 0;
 	fdf->map->map = read_map(map, fdf);
@@ -180,8 +74,7 @@ static void init_struct(t_fdf *fdf, char *map)
 	fdf->map->size.x = fdf->map->map_len;
 	fdf->map->size.y = fdf->map->map_height;
 	fdf->sprites = malloc(sizeof(t_sprite));
-	fdf->sprites->sprites_size = 0;
-	fdf->map->moves = 0;
+	init_to_null(fdf);
 }
 
 void init_datas(t_fdf *fdf, char *map)

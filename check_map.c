@@ -6,7 +6,7 @@
 /*   By: bbouarab <bbouarab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 11:30:33 by bbouarab          #+#    #+#             */
-/*   Updated: 2025/12/16 13:59:21 by bbouarab         ###   ########.fr       */
+/*   Updated: 2025/12/17 13:55:06 by bbouarab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void check_valid_size(t_fdf *fdf, char *map)
 			{
 				free(fdf->map->map);
 				free(fdf->map);
-				ft_printf("Map hasn't a valid size");
+				ft_printf_error("Map hasn't a valid size");
 				exit(1);
 			}
 		}
@@ -107,7 +107,7 @@ void flood_fill(char **tab, t_point size, t_point begin, t_fdf *fdf)
 		flood_fill(tab, size, begin, fdf);
 }
 
-int check_walls(t_fdf *fdf)
+void check_walls(t_fdf *fdf)
 {
 	int i;
 	int y;
@@ -119,18 +119,18 @@ int check_walls(t_fdf *fdf)
 		while (y < fdf->map->map_len)
 		{
 			if (i == 0 && fdf->map->points[i][y].type != '1')
-				return (ft_printf("The map is invalid."), free_things(fdf, 1), -1);
+				return (ft_printf_error("The map is invalid."), free_things(fdf, -1));
 			if ((i > 0 && i < fdf->map->map_height - 1) &&
-					fdf->map->points[i][0].type != '1' ||
-				fdf->map->points[i][fdf->map->map_len - 1].type != '1')
-				return (ft_printf("The map is invalid."), free_things(fdf, 1), -1);
+					(fdf->map->points[i][0].type != '1' ||
+					fdf->map->points[i][fdf->map->map_len - 1].type != '1'))
+				return (ft_printf_error("The map is invalid."), free_things(fdf, -1));
 			if (i == fdf->map->map_height - 1 && fdf->map->points[i][y].type != '1')
-				return (ft_printf("The map is invalid."), free_things(fdf, 1), -1);
+				return (ft_printf_error("The map is invalid."), free_things(fdf, -1));
 			y++;
 		}
 		i++;
 	}
 	flood_fill(fdf->map->split_copy, fdf->map->size, find_begin(fdf), fdf);
 	if (fdf->map->flood_fill != fdf->map->collectibles + 1)
-		return ((ft_printf("The map isn't solvable."), free_things(fdf, 1), -1), 1);
+		return (ft_printf_error("The map isn't solvable."), free_things(fdf, -1));
 }
