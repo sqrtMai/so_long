@@ -1,5 +1,5 @@
 NAME = so_long
-CC = cc -Wall -Wextra -Werror
+CC = cc
 CFLAGS = -I./libft -I./ -Imlx_linux
 AR = ar rcs
 RM = rm -f

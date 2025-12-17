@@ -6,17 +6,17 @@
 /*   By: bbouarab <bbouarab@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 11:30:33 by bbouarab          #+#    #+#             */
-/*   Updated: 2025/12/17 13:55:06 by bbouarab         ###   ########.fr       */
+/*   Updated: 2025/12/17 16:41:39 by bbouarab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void check_valid_size(t_fdf *fdf, char *map)
+void	check_valid_size(t_fdf *fdf, char *map)
 {
-	int i;
-	int line_size;
-	int next_line_size;
+	int	i;
+	int	line_size;
+	int	next_line_size;
 
 	i = 0;
 	line_size = get_map_len(map);
@@ -29,7 +29,7 @@ void check_valid_size(t_fdf *fdf, char *map)
 			{
 				free(fdf->map->map);
 				free(fdf->map);
-				ft_printf_error("Map hasn't a valid size");
+				ft_printf_error("Error\nMap size is not coherent");
 				exit(1);
 			}
 		}
@@ -37,12 +37,12 @@ void check_valid_size(t_fdf *fdf, char *map)
 	}
 }
 
-int check_valid_map(char *map)
+int	check_valid_map(char *map)
 {
-	int exit;
-	int start;
-	int collectible;
-	int i;
+	int	exit;
+	int	start;
+	int	collectible;
+	int	i;
 
 	exit = 0;
 	start = 0;
@@ -56,18 +56,20 @@ int check_valid_map(char *map)
 			start = 1;
 		if (map[i] == 'C')
 			collectible = 1;
-		if (map[i] != 'P' && map[i] != 'C' && map[i] != 'E' && map[i] != '1' && map[i] != '0' && map[i] != '\n')
-			return 0;
+		if (map[i] != 'P' && map[i] != 'C' && map[i] != 'E'
+			&& map[i] != '1' && map[i] != '0' && map[i] != '\n')
+			return (0);
 		i++;
 	}
 	if (start > 1 || exit > 1)
-		return 0;
+		return (0);
 	return (exit + start + collectible);
 }
-t_point find_begin(t_fdf *fdf)
+
+t_point	find_begin(t_fdf *fdf)
 {
-	int i;
-	int y;
+	int	i;
+	int	y;
 
 	i = 0;
 	while (i < fdf->map->map_height)
@@ -76,41 +78,44 @@ t_point find_begin(t_fdf *fdf)
 		while (y < fdf->map->map_len)
 		{
 			if (fdf->map->points[i][y].type == 'P')
-				return fdf->map->points[i][y];
+				return (fdf->map->points[i][y]);
 			y++;
 		}
 		i++;
 	}
-	return fdf->map->points[i][y];
+	return (fdf->map->points[i][y]);
 }
 
-
-void flood_fill(char **tab, t_point size, t_point begin, t_fdf *fdf)
+void	flood_fill(char **tab, t_point size, t_point begin, t_fdf *fdf)
 {
 	if (tab[begin.y][begin.x] == 'E' || tab[begin.y][begin.x] == 'C')
 		fdf->map->flood_fill++;
 	tab[begin.y][begin.x] = 'F';
 	begin.y++;
-	if (begin.y < size.y && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+	if (begin.y < size.y && tab[begin.y][begin.x] != '1'
+		&& tab[begin.y][begin.x] != 'F')
 		flood_fill(tab, size, begin, fdf);
 	begin.y--;
 	begin.y--;
-	if (begin.y >= 0 && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+	if (begin.y >= 0 && tab[begin.y][begin.x] != '1'
+		&& tab[begin.y][begin.x] != 'F')
 		flood_fill(tab, size, begin, fdf);
 	begin.y++;
 	begin.x++;
-	if (begin.x < size.x && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+	if (begin.x < size.x && tab[begin.y][begin.x] != '1'
+		&& tab[begin.y][begin.x] != 'F')
 		flood_fill(tab, size, begin, fdf);
 	begin.x--;
 	begin.x--;
-	if (begin.x >= 0 && tab[begin.y][begin.x] != '1' && tab[begin.y][begin.x] != 'F')
+	if (begin.x >= 0 && tab[begin.y][begin.x] != '1'
+		&& tab[begin.y][begin.x] != 'F')
 		flood_fill(tab, size, begin, fdf);
 }
 
-void check_walls(t_fdf *fdf)
+void	check_walls(t_fdf *fdf)
 {
-	int i;
-	int y;
+	int	i;
+	int	y;
 
 	i = 0;
 	while (i < fdf->map->map_height)
@@ -119,18 +124,19 @@ void check_walls(t_fdf *fdf)
 		while (y < fdf->map->map_len)
 		{
 			if (i == 0 && fdf->map->points[i][y].type != '1')
-				return (ft_printf_error("The map is invalid."), free_things(fdf, -1));
-			if ((i > 0 && i < fdf->map->map_height - 1) &&
-					(fdf->map->points[i][0].type != '1' ||
-					fdf->map->points[i][fdf->map->map_len - 1].type != '1'))
-				return (ft_printf_error("The map is invalid."), free_things(fdf, -1));
-			if (i == fdf->map->map_height - 1 && fdf->map->points[i][y].type != '1')
-				return (ft_printf_error("The map is invalid."), free_things(fdf, -1));
+				return (invalid_error_message(fdf));
+			if ((i > 0 && i < fdf->map->map_height - 1)
+				&& (fdf->map->points[i][0].type != '1'
+				|| fdf->map->points[i][fdf->map->map_len - 1].type != '1'))
+				return (invalid_error_message(fdf));
+			if (i == fdf->map->map_height - 1
+				&& fdf->map->points[i][y].type != '1')
+				return (invalid_error_message(fdf));
 			y++;
 		}
 		i++;
 	}
 	flood_fill(fdf->map->split_copy, fdf->map->size, find_begin(fdf), fdf);
 	if (fdf->map->flood_fill != fdf->map->collectibles + 1)
-		return (ft_printf_error("The map isn't solvable."), free_things(fdf, -1));
+		return (not_solvable_error_message(fdf));
 }

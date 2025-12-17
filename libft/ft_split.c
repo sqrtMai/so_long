@@ -14,8 +14,9 @@
 
 static int	is_sep(char c, char *sep)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (sep[i])
 	{
 		if (sep[i] == c)
